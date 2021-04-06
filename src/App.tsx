@@ -9,14 +9,13 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
   },
   AppHeader: {
+    alignItems: "center",
     backgroundColor: "white",
-    minHeight: "100vh",
+    color: "white",
     display: "flex",
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
     fontSize: "calc(10px + 2vmin)",
-    color: "white",
+    justifyContent: "center",
   },
   navLink: {
     flexGrow: 1,

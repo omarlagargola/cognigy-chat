@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {
   TextField,
@@ -7,15 +7,17 @@ import {
   Chip,
   Typography,
   Paper,
+  Button,
 } from "@material-ui/core";
 import { SocketClient } from "@cognigy/socket-client";
+import useLocalStorage from "../customHook/useLocalStorage";
 
 const useStyles = makeStyles((theme) => ({
   chat: {
-    height: "600px",
-    width: "300px",
     backgroundColor: "azure",
+    height: "600px",
     margin: "10px",
+    width: "300px",
   },
   chatList: {
     height: "100%",
@@ -23,8 +25,8 @@ const useStyles = makeStyles((theme) => ({
     padding: 0,
   },
   innerMessage: {
-    whiteSpace: "break-spaces",
     padding: "10px",
+    whiteSpace: "break-spaces",
   },
   message: {
     height: "auto",
@@ -32,12 +34,12 @@ const useStyles = makeStyles((theme) => ({
     wordBreak: "break-word",
   },
   botMessage: {
-    float: "left",
     borderTopLeftRadius: 0,
+    float: "left",
   },
   userMessage: {
-    float: "right",
     borderTopRightRadius: 0,
+    float: "right",
   },
   chatListItem: {
     display: "inline-block",
@@ -60,24 +62,25 @@ function ChatBot() {
   const css = useStyles();
 
   const enterKeyCode = 13;
-  const [userMessage, setUserMessage] = useState("");
-  const [messagesList, setMessagesList] = useState([{id:0, message:"I am chatbot", isBot:true}]);
+  const [userMessage, setUserMessage] = useLocalStorage("userMessage", "");
+  const [messagesList, setMessagesList] = useLocalStorage("chatList", []);
 
   const chatRef = useRef<HTMLDivElement>(null);
 
-  const handleMessage = (e:{target:{value: React.SetStateAction<string>}}) => {
-    setUserMessage(e.target.value);
-  };
-
-  const handleMessageSent = async (e:{keyCode: number}) => {
+  const sendMessage = (e:{keyCode: number}) => {
     if (e.keyCode === enterKeyCode && userMessage.length !== 0) {
       setUserMessage("");
-      setMessagesList((prevState) => [
+      setMessagesList((prevState: any) => [
         ...prevState,
-        { id: prevState[prevState.length-1].id+1, message: userMessage, isBot: false },
+        { id: prevState[prevState.length-1]?.id+1 || 0, message: userMessage, isBot: false },
       ]);
       client.sendMessage(userMessage);
     }
+  };
+
+  const resetChat = () => {
+    setUserMessage("");
+    setMessagesList([]);
   };
 
   useEffect(() => {
@@ -85,7 +88,7 @@ function ChatBot() {
     client.on("output", (output) => {
       console.log(output);
       if(output.data !== null){
-        setMessagesList((prevState) => [
+        setMessagesList((prevState: any) => [
           ...prevState,
           { id: prevState[prevState.length-1].id+1 , message: output.text, isBot: true },
         ]);
@@ -93,12 +96,13 @@ function ChatBot() {
     });
     return () => {
       console.log("disconnect");
+      setMessagesList([]);
       client.disconnect();
     }
-  }, []);
+  }, [setMessagesList]);
 
   useEffect(() => {
-    chatRef?.current?.scrollIntoView({ behavior: "smooth", block: "end"});
+    chatRef?.current?.scrollIntoView({block: "end"});
   }, [messagesList]);
 
   return(
@@ -106,7 +110,7 @@ function ChatBot() {
       <Paper elevation={3} className={css.chat}>
         <List className={css.chatList}>
           <div ref={chatRef}>
-            {messagesList.map(({ id, message, isBot }) => (
+            {messagesList.map(({ id, message, isBot }: any) => (
               <ListItem className={css.chatListItem} key={id}>
                 <Chip
                   label={
@@ -129,10 +133,11 @@ function ChatBot() {
           id="outlined-basic"
           label="Please write your message"
           variant="outlined"
-          onChange={handleMessage}
-          onKeyDown={handleMessageSent}
+          onChange={e => setUserMessage(e.target.value)}
+          onKeyDown={sendMessage}
           value={userMessage}
         />
+        <Button variant="contained" onClick={()=>resetChat()}>Reset Chat</Button>
       </Paper>
     </>
   );
