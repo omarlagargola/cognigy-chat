@@ -96,7 +96,6 @@ function ChatBot() {
     });
     return () => {
       console.log("disconnect");
-      setMessagesList([]);
       client.disconnect();
     }
   }, [setMessagesList]);
