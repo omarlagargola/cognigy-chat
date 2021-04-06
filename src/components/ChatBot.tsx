@@ -6,7 +6,6 @@ import {
   ListItem,
   Chip,
   Typography,
-  Box,
   Paper,
 } from "@material-ui/core";
 import { SocketClient } from "@cognigy/socket-client";
@@ -16,6 +15,7 @@ const useStyles = makeStyles((theme) => ({
     height: "600px",
     width: "300px",
     backgroundColor: "azure",
+    margin: "10px",
   },
   chatList: {
     height: "100%",
@@ -63,14 +63,13 @@ function ChatBot() {
   const [userMessage, setUserMessage] = useState("");
   const [messagesList, setMessagesList] = useState([{id:0, message:"I am chatbot", isBot:true}]);
 
-  const chatRef = useRef();
-  const inputRef = useRef();
+  const chatRef = useRef<HTMLDivElement>(null);
 
-  const handleMessage = (e) => {
+  const handleMessage = (e:{target:{value: React.SetStateAction<string>}}) => {
     setUserMessage(e.target.value);
   };
 
-  const handleMessageSent = async (e) => {
+  const handleMessageSent = async (e:{keyCode: number}) => {
     if (e.keyCode === enterKeyCode && userMessage.length !== 0) {
       setUserMessage("");
       setMessagesList((prevState) => [
@@ -92,18 +91,21 @@ function ChatBot() {
         ]);
       }
     });
+    return () => {
+      console.log("disconnect");
+      client.disconnect();
+    }
   }, []);
 
   useEffect(() => {
-    inputRef.current.children[0].focus()
-    chatRef.current.scrollIntoView({ behavior: "smooth", block: "end"});
+    chatRef?.current?.scrollIntoView({ behavior: "smooth", block: "end"});
   }, [messagesList]);
 
   return(
     <>
       <Paper elevation={3} className={css.chat}>
         <List className={css.chatList}>
-          <Box ref={chatRef}>
+          <div ref={chatRef}>
             {messagesList.map(({ id, message, isBot }) => (
               <ListItem className={css.chatListItem} key={id}>
                 <Chip
@@ -119,7 +121,7 @@ function ChatBot() {
                 />
               </ListItem>
             ))}
-          </Box>
+          </div>
         </List>
         <TextField
           className={css.input}
@@ -127,7 +129,6 @@ function ChatBot() {
           id="outlined-basic"
           label="Please write your message"
           variant="outlined"
-          ref={inputRef}
           onChange={handleMessage}
           onKeyDown={handleMessageSent}
           value={userMessage}
