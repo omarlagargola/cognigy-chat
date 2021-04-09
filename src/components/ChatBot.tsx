@@ -1,18 +1,16 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {
   TextField,
   List,
-  ListItem,
-  Chip,
-  Typography,
   Paper,
   Button,
 } from "@material-ui/core";
 import { SocketClient } from "@cognigy/socket-client";
 import useLocalStorage from "../customHook/useLocalStorage";
+import ChatMessages from "./ChatMessages";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   chat: {
     backgroundColor: "azure",
     height: "600px",
@@ -23,26 +21,6 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     overflowY: "auto",
     padding: 0,
-  },
-  innerMessage: {
-    padding: "10px",
-    whiteSpace: "break-spaces",
-  },
-  message: {
-    height: "auto",
-    whiteSpace: "break-spaces",
-    wordBreak: "break-word",
-  },
-  botMessage: {
-    borderTopLeftRadius: 0,
-    float: "left",
-  },
-  userMessage: {
-    borderTopRightRadius: 0,
-    float: "right",
-  },
-  chatListItem: {
-    display: "inline-block",
   },
   input: {
     background: "white",
@@ -109,21 +87,7 @@ function ChatBot() {
       <Paper elevation={3} className={css.chat}>
         <List className={css.chatList}>
           <div ref={chatRef}>
-            {messagesList.map(({ id, message, isBot }: any) => (
-              <ListItem className={css.chatListItem} key={id}>
-                <Chip
-                  label={
-                    <Typography variant="body2" className={css.innerMessage}>
-                      {message}
-                    </Typography>
-                  }
-                  color={isBot ? "secondary" : "primary"}
-                  className={`${css.message} ${
-                    isBot ? css.botMessage : css.userMessage
-                  }`}
-                />
-              </ListItem>
-            ))}
+            <ChatMessages messagesList={messagesList}></ChatMessages>
           </div>
         </List>
         <TextField

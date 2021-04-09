@@ -1,4 +1,3 @@
-import React from 'react';
 import ChatBot from './components/ChatBot';
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { BrowserRouter, Route, Switch, Redirect, Link } from "react-router-dom";
