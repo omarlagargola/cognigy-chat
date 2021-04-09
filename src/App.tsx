@@ -1,26 +1,31 @@
-import ChatBot from './components/ChatBot';
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import { BrowserRouter, Route, Switch, Redirect, Link } from "react-router-dom";
+// eslint-disable-next-line no-use-before-define
+import React from 'react';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import {
+  BrowserRouter, Route, Switch, Redirect, Link,
+} from 'react-router-dom';
 import { AppBar, Toolbar, Typography } from '@material-ui/core';
+// @ts-ignore
+import ChatBot from './components/ChatBot.tsx';
 
-const useStyles = makeStyles((theme) => ({
-  App:{
-    textAlign: "center",
+const useStyles = makeStyles(() => ({
+  App: {
+    textAlign: 'center',
   },
   AppHeader: {
-    alignItems: "center",
-    backgroundColor: "white",
-    color: "white",
-    display: "flex",
-    flexDirection: "row",
-    fontSize: "calc(10px + 2vmin)",
-    justifyContent: "center",
+    alignItems: 'center',
+    backgroundColor: 'white',
+    color: 'white',
+    display: 'flex',
+    flexDirection: 'row',
+    fontSize: 'calc(10px + 2vmin)',
+    justifyContent: 'center',
   },
   navLink: {
     flexGrow: 1,
   },
   link: {
-    color: "white",
+    color: 'white',
   },
 }));
 function App() {
@@ -44,7 +49,7 @@ function App() {
             <Route
               exact
               path="/chat"
-              render={() => <ChatBot></ChatBot>}
+              render={() => <ChatBot />}
             />
           </Switch>
         </header>

@@ -1,11 +1,13 @@
-import React from 'react';
+// eslint-disable-next-line no-use-before-define
+import React, { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+// @ts-ignore
+import App from './App.tsx';
 
 ReactDOM.render(
-  <React.StrictMode>
+  <StrictMode>
     <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  </StrictMode>,
+  document.getElementById('root'),
 );
